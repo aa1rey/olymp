@@ -2,49 +2,83 @@
 
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 
-int walk()
-{
-    Fairyland world;
+using namespace std;
 
-    for (int i = 0; i < 1000; ++i)
-    {
-        Direction direction;
+Fairyland world; // инициализация мира
 
-        switch (rand() % 4)
-        {
-        case 0:
-            direction = Direction::Up;
-            break;
+int move() {
+	Direction leftDirection; // переменная левого направления
+	Direction frontDirection; // переменная прямого направления
+	for (int i = 0; i < 1000; i++) {
 
-        case 1:
-            direction = Direction::Down;
-            break;
+		// Назначаем левое направление, исходя из того, куда можем пойти
 
-        case 2:
-            direction = Direction::Left;
-            break;
+		if (world.canGo(Character::Ivan, Direction::Down)) {
+			leftDirection = Direction::Right;
+		}
+		if (world.canGo(Character::Ivan, Direction::Left)) {
+			leftDirection = Direction::Down;
+		}
+		if (world.canGo(Character::Ivan, Direction::Up)) {
+			leftDirection = Direction::Left;
+		}
+		if (world.canGo(Character::Ivan, Direction::Right)) {
+			leftDirection = Direction::Up;
+		}
+		
+		// Назначаем прямое направление, исходя из того, куда можем пойти
 
-        default:
-            direction = Direction::Right;
-            break;
-        }
+		if (world.canGo(Character::Ivan, Direction::Down)) {
+			frontDirection = Direction::Down;
+		}
+		if (world.canGo(Character::Ivan, Direction::Left)) {
+			frontDirection = Direction::Left;
+		}
+		if (world.canGo(Character::Ivan, Direction::Up)) {
+			frontDirection = Direction::Up;
+		}
+		if (world.canGo(Character::Ivan, Direction::Right)) {
+			frontDirection = Direction::Right;
+		}
 
-        if (world.canGo(Character::Ivan, direction) && world.go(direction, Direction::Pass))
-            return world.getTurnCount();
-    }
+		// пока не можем пойти налево, идем прямо
 
-    return 0;
+		while (!world.canGo(Character::Ivan, leftDirection)) {
+			world.go(frontDirection, Direction::Pass);
+		}
+	}
+	return 0;
 }
 
-int main()
-{
-    srand(static_cast<unsigned int>(time(nullptr)));
+int main() {
 
-    if (const int turns = walk())
-        std::cout << "Found in " << turns << " turns" << std::endl;
-    else
-        std::cout << "Not found" << std::endl;
+	// проверяем нашли ли Ivan и Elena друг друга
 
-    return 0;
+	bool meet = move();
+	if (meet) {
+		cout << "Found in: " << world.getTurnCount() << endl;
+	}
+	else {
+		cout << "Not found. " << world.getTurnCount() << endl;
+	}
+	return 0;
 }
+
+
+/* 
+Карта лабиринта:
+
+@#####....
+.#...#....
+.#...#...#
+.#.#.#.#.#
+.#.#.#.#..
+.#.#.#.##.
+.#.#.#.#..
+...#.#.#.#
+...#.#.#..
+...#...#.&
+
+*/
