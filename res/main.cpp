@@ -6,111 +6,117 @@
 
 using namespace std;
 
+
+
 Fairyland world; // инициализация мира
 
+
+
 int move() {
+	system("chcp 1251>nul");
 
-	for (int i = 0; i < 1; i++) {
+	Direction reservDirection;
+	Direction frontDirection; // переменная прямого направления
+	Direction leftDirection; // переменная левого направления
+	Direction rightDirection; // переменная правого направления
+	Direction backDirection; // переменная заднего направления
 
-		Direction leftDirection; // переменная левого направления
+		// Назначаем прямое, левое, правое и заднее направления, исходя из того, куда можем пойти
 
-		// Назначаем левое направление, исходя из того, куда можем пойти
+	if (world.canGo(Character::Ivan, Direction::Down)) {
+		frontDirection = Direction::Down;
+		leftDirection = Direction::Right;
+		rightDirection = Direction::Left;
+		backDirection = Direction::Up;
+	}
+	else if (world.canGo(Character::Ivan, Direction::Left)) {
+		frontDirection = Direction::Left;
+		leftDirection = Direction::Down;
+		rightDirection = Direction::Up;
+		backDirection = Direction::Right;
+	}
+	else if (world.canGo(Character::Ivan, Direction::Up)) {
+		frontDirection = Direction::Up;
+		leftDirection = Direction::Left;
+		rightDirection = Direction::Right;
+		backDirection = Direction::Down;
+	}
+	else if (world.canGo(Character::Ivan, Direction::Right)) {
+		frontDirection = Direction::Right;
+		leftDirection = Direction::Up;
+		rightDirection = Direction::Down;
+		backDirection = Direction::Left;
 
-		if (world.canGo(Character::Ivan, Direction::Down)) {
-			leftDirection = Direction::Right;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Left)) {
-			leftDirection = Direction::Down;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Up)) {
-			leftDirection = Direction::Left;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Right)) {
-			leftDirection = Direction::Up;
-		}
+	}
 
-		Direction frontDirection; // переменная прямого направления
+	/*
+Карта лабиринта:
 
-		// Назначаем прямое направление, исходя из того, куда можем пойти
+@#####....
+.#...#....
+.#...#...#
+.#.#.#.#.#
+.#.#.#.#..
+.#.#.#.##.
+.#.#.#.#..
+...#.#.#.#
+...#.#.#..
+...#...#.&
 
-		if (world.canGo(Character::Ivan, Direction::Down)) {
-			frontDirection = Direction::Down;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Left)) {
-			frontDirection = Direction::Left;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Up)) {
-			frontDirection = Direction::Up;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Right)) {
-			frontDirection = Direction::Right;
-		}
+*/
 
-		Direction rightDirection; // переменная правого направления
+	for (int i = 0; i < 3; i++) {
 
-		// Назначаем правое направление, исходя из того, куда можем пойти
+		
+		
+		if (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
 
-		if (world.canGo(Character::Ivan, Direction::Down)) {
-			rightDirection = Direction::Left;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Left)) {
-			rightDirection = Direction::Up;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Up)) {
-			rightDirection = Direction::Right;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Right)) {
-			rightDirection = Direction::Down;
-		}
-
-		Direction backDirection; // переменная заднего направления
-
-		// Назначаем заднее направление, исходя из того, куда можем пойти
-
-		if (world.canGo(Character::Ivan, Direction::Down)) {
-			backDirection = Direction::Up;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Left)) {
-			backDirection = Direction::Right;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Up)) {
-			backDirection = Direction::Down;
-		}
-		else if (world.canGo(Character::Ivan, Direction::Right)) {
-			backDirection = Direction::Left;
-		}
-
-		// пока не можем пойти налево, идем прямо
-
-		while (!world.canGo(Character::Ivan, leftDirection)) {
 			world.go(frontDirection, Direction::Pass);
-		}
 
-		if (world.canGo(Character::Ivan, leftDirection)) {
-			world.go(leftDirection, Direction::Pass);
-		}
+			while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
+				world.go(frontDirection, Direction::Pass);
+			}
 
-		Direction reservDirection = rightDirection;
-		rightDirection = frontDirection;
-		frontDirection = leftDirection;
-		leftDirection = backDirection;
-		backDirection = reservDirection;
+			// разворачиваемся влево:
 
-		// хочу запретить ему рассматривать поворот направо и назад. но у меня не получается понять как это сделать. Ниже по логике написал, как думал можно. Но Visual Studio выебывается.
-		// функцию canGo() типа bool нельзя изменить, потому что как я понял, она является константой. Но как тогда запретить ему проверять, может ли он пойти назад или вправо? 
-
-		if (world.canGo(Character::Ivan, rightDirection)) {
-			world.canGo(Character::Ivan, rightDirection) = false;
+			reservDirection = rightDirection;
+			rightDirection = frontDirection;
+			frontDirection = leftDirection;
+			leftDirection = backDirection;
+			backDirection = reservDirection;
 
 		}
+
+		else if (world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
 
 			
+
+			world.go(frontDirection, Direction::Pass);
+
+			while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
+				world.go(frontDirection, Direction::Pass);
+			}
+
+			// разворачиваемся влево:
+
+			reservDirection = rightDirection;
+			rightDirection = frontDirection;
+			frontDirection = leftDirection;
+			leftDirection = backDirection;
+			backDirection = reservDirection;
+
+			world.go(leftDirection, Direction::Pass);
+
+		}
+
+		// я думал, что после каждого условия измененные направления сохрняются, но при каждом новом цикле значения обновляются до дефолтных, т.е. те, которые заданы вне цикла.
 
 	}
 	return 0;
 }
 
 int main() {
+	system("chcp 1251>nul");
 
 	// проверяем нашли ли Ivan и Elena друг друга
 
@@ -125,18 +131,29 @@ int main() {
 }
 
 
-/* 
-Карта лабиринта:
 
-@#####....
-.#...#....
-.#...#...#
-.#.#.#.#.#
-.#.#.#.#..
-.#.#.#.##.
-.#.#.#.#..
-...#.#.#.#
-...#.#.#..
-...#...#.&
+
+/*
+
+RLD
+RLU
+RDU
+
+LDU
+
+DU
+DR
+DL
+
+UR
+UL
+
+RL
+
+L
+R
+D
+U
+
 
 */
