@@ -6,14 +6,9 @@
 
 using namespace std;
 
-
-
 Fairyland world; // инициализация мира
 
-
-
-int move() {
-	system("chcp 1251>nul");
+int walk() {
 
 	Direction reservDirection;
 	Direction frontDirection; // переменная прямого направления
@@ -63,44 +58,11 @@ int move() {
 ...#.#.#..
 ...#...#.&
 
-
-
-
-Как я думал, он двигается:
-
-Собакой(@) обозначено его перемещение.
-
-@#####....
-@#...#....
-@#...#...#
-@#.#.#.#.#
-@#.#.#.#..
-@#.#.#.##.
-@#@#.#.#..
-@@@#.#.#.#
-...#.#.#..
-...#...#.&
-
-Как на деле получается:
-
-@#####....
-@#...#....
-@#...#...#
-@#.#.#.#.#
-@#.#.#.#..
-@#.#.#.##.
-@#.#.#.#..
-@..#.#.#.#
-@@.#.#.#..
-.@.#...#.&
-
 */
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 23; i++) { // находит за 23 цикла
 
-		
-		
-		if (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
+		if (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) { // слева занято, прямо свободно
 
 			world.go(frontDirection, Direction::Pass);
 
@@ -110,81 +72,71 @@ int move() {
 
 			// разворачиваемся влево:
 
-			reservDirection = rightDirection;
-			rightDirection = frontDirection;
+			reservDirection = frontDirection;
 			frontDirection = leftDirection;
 			leftDirection = backDirection;
-			backDirection = reservDirection;
+			backDirection = rightDirection;
+			rightDirection = reservDirection;
 
 		}
 
-		else if (world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
+		else if (world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {  // слева свободно, прямо свободно
 
 			
 
 			world.go(frontDirection, Direction::Pass);
 
-			while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
+			while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) { 
 				world.go(frontDirection, Direction::Pass);
 			}
 
 			// разворачиваемся влево:
 
-			reservDirection = rightDirection;
-			rightDirection = frontDirection;
+			reservDirection = frontDirection;
 			frontDirection = leftDirection;
 			leftDirection = backDirection;
-			backDirection = reservDirection;
+			backDirection = rightDirection;
+			rightDirection = reservDirection;
 
-			world.go(leftDirection, Direction::Pass);
+			world.go(frontDirection, Direction::Pass);
 
 		}
 
-		// я думал, что после каждого условия измененные направления сохрняются, но при каждом новом цикле значения обновляются до дефолтных, т.е. те, которые заданы вне цикла.
+		else if (world.canGo(Character::Ivan, leftDirection) == true && !world.canGo(Character::Ivan, frontDirection) == true) { // слева свободно, прямо занято
 
+				reservDirection = frontDirection;
+				frontDirection = backDirection;
+				backDirection = reservDirection;
+
+				reservDirection = leftDirection;
+				leftDirection = rightDirection;
+				rightDirection = reservDirection;
+		}
+
+		else if (!world.canGo(Character::Ivan, leftDirection) == true && !world.canGo(Character::Ivan, frontDirection) == true) { // слева занято, прямо занято
+
+			reservDirection = frontDirection;
+			frontDirection = rightDirection;
+			rightDirection = backDirection;
+			backDirection = leftDirection;
+			leftDirection = reservDirection;
+
+		}
+
+		cout << world.getTurnCount() << endl;
+		
 	}
+	cout << world.getTurnCount() << endl;
 	return 0;
 }
 
-int main() {
-	system("chcp 1251>nul");
+int main()
+{
 
-	// проверяем нашли ли Ivan и Elena друг друга
+	if (const int turns = walk())
+		std::cout << "Found in " << turns << " turns" << std::endl;
+	else
+		std::cout << "Not found" << std::endl;
 
-	bool meet = move();
-	if (meet) {
-		cout << "Found in: " << world.getTurnCount() << endl;
-	}
-	else {
-		cout << "Not found. " << world.getTurnCount() << endl;
-	}
 	return 0;
 }
-
-
-
-
-/*
-
-RLD
-RLU
-RDU
-
-LDU
-
-DU
-DR
-DL
-
-UR
-UL
-
-RL
-
-L
-R
-D
-U
-
-
-*/
