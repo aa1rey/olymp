@@ -9,7 +9,7 @@ using namespace std;
 Fairyland world; // инициализация мира
 
 int walk() {
-
+	int s = 0;
 	Direction reservDirection;
 	Direction frontDirection; // переменная прямого направления
 	Direction leftDirection; // переменная левого направления
@@ -60,83 +60,85 @@ int walk() {
 
 */
 
-	for (int i = 0; i < 23; i++) { // находит за 23 цикла
+	while (world.go(Direction::Pass, Direction::Pass) == false) {
+
+		s++;
 
 		if (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) { // слева занято, прямо свободно
 
-			world.go(frontDirection, Direction::Pass);
+					world.go(frontDirection, Direction::Pass);
 
-			while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
-				world.go(frontDirection, Direction::Pass);
-			}
+					while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
+						world.go(frontDirection, Direction::Pass);
+					}
 
-			// разворачиваемся влево:
+					// разворачиваемся влево:
 
-			reservDirection = frontDirection;
-			frontDirection = leftDirection;
-			leftDirection = backDirection;
-			backDirection = rightDirection;
-			rightDirection = reservDirection;
+					reservDirection = frontDirection;
+					frontDirection = leftDirection;
+					leftDirection = backDirection;
+					backDirection = rightDirection;
+					rightDirection = reservDirection;
 
-		}
+				}
 
 		else if (world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {  // слева свободно, прямо свободно
 
-			
 
-			world.go(frontDirection, Direction::Pass);
 
-			while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) { 
-				world.go(frontDirection, Direction::Pass);
-			}
+					world.go(frontDirection, Direction::Pass);
 
-			// разворачиваемся влево:
+					while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
+						world.go(frontDirection, Direction::Pass);
+					}
 
-			reservDirection = frontDirection;
-			frontDirection = leftDirection;
-			leftDirection = backDirection;
-			backDirection = rightDirection;
-			rightDirection = reservDirection;
+					// разворачиваемся влево:
 
-			world.go(frontDirection, Direction::Pass);
+					reservDirection = frontDirection;
+					frontDirection = leftDirection;
+					leftDirection = backDirection;
+					backDirection = rightDirection;
+					rightDirection = reservDirection;
 
-		}
+					world.go(frontDirection, Direction::Pass);
+
+				}
 
 		else if (world.canGo(Character::Ivan, leftDirection) == true && !world.canGo(Character::Ivan, frontDirection) == true) { // слева свободно, прямо занято
 
-				reservDirection = frontDirection;
-				frontDirection = backDirection;
-				backDirection = reservDirection;
+					reservDirection = frontDirection;
+					frontDirection = backDirection;
+					backDirection = reservDirection;
 
-				reservDirection = leftDirection;
-				leftDirection = rightDirection;
-				rightDirection = reservDirection;
-		}
+					reservDirection = leftDirection;
+					leftDirection = rightDirection;
+					rightDirection = reservDirection;
+				}
 
 		else if (!world.canGo(Character::Ivan, leftDirection) == true && !world.canGo(Character::Ivan, frontDirection) == true) { // слева занято, прямо занято
 
-			reservDirection = frontDirection;
-			frontDirection = rightDirection;
-			rightDirection = backDirection;
-			backDirection = leftDirection;
-			leftDirection = reservDirection;
+					reservDirection = frontDirection;
+					frontDirection = rightDirection;
+					rightDirection = backDirection;
+					backDirection = leftDirection;
+					leftDirection = reservDirection;
 
-		}
 
-		cout << world.getTurnCount() << endl;
-		
+				}
+				
 	}
-	cout << world.getTurnCount() << endl;
-	return 0;
+		
+		return world.getTurnCount() - (s + 1);
 }
 
 int main()
 {
 
+
 	if (const int turns = walk())
-		std::cout << "Found in " << turns << " turns" << std::endl;
+		cout << "Found in " << turns << " turns" << endl;
 	else
-		std::cout << "Not found" << std::endl;
+		cout << "Not found" << endl;
 
 	return 0;
 }
