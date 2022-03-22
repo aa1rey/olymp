@@ -18,7 +18,13 @@ int walk() {
 
 		// Назначаем прямое, левое, правое и заднее направления, исходя из того, куда можем пойти
 
-	if (world.canGo(Character::Ivan, Direction::Down)) {
+	if (world.canGo(Character::Ivan, Direction::Right) == true && world.canGo(Character::Ivan, Direction::Up) == true && world.canGo(Character::Ivan, Direction::Down) == true) {
+		frontDirection = Direction::Up;
+		leftDirection = Direction::Left;
+		rightDirection = Direction::Right;
+		backDirection = Direction::Down;
+	}
+	else if (world.canGo(Character::Ivan, Direction::Down)) {
 		frontDirection = Direction::Down;
 		leftDirection = Direction::Right;
 		rightDirection = Direction::Left;
@@ -41,7 +47,6 @@ int walk() {
 		leftDirection = Direction::Up;
 		rightDirection = Direction::Down;
 		backDirection = Direction::Left;
-
 	}
 
 	/*
@@ -66,68 +71,72 @@ int walk() {
 
 		if (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) { // слева занято, прямо свободно
 
-					world.go(frontDirection, Direction::Pass);
+			world.go(frontDirection, Direction::Pass);
 
-					while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
-						world.go(frontDirection, Direction::Pass);
-					}
+			while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
+				world.go(frontDirection, Direction::Pass);
+			}
 
-					// разворачиваемся влево:
+			// разворачиваемся влево:
 
-					reservDirection = frontDirection;
-					frontDirection = leftDirection;
-					leftDirection = backDirection;
-					backDirection = rightDirection;
-					rightDirection = reservDirection;
+			reservDirection = frontDirection;
+			frontDirection = leftDirection;
+			leftDirection = backDirection;
+			backDirection = rightDirection;
+			rightDirection = reservDirection;
 
-				}
+		}
 
 		else if (world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {  // слева свободно, прямо свободно
 
 
 
-					world.go(frontDirection, Direction::Pass);
+			world.go(frontDirection, Direction::Pass);
 
-					while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
-						world.go(frontDirection, Direction::Pass);
-					}
+			while (!world.canGo(Character::Ivan, leftDirection) == true && world.canGo(Character::Ivan, frontDirection) == true) {
+				world.go(frontDirection, Direction::Pass);
+			}
 
-					// разворачиваемся влево:
+			// разворачиваемся влево:
 
-					reservDirection = frontDirection;
-					frontDirection = leftDirection;
-					leftDirection = backDirection;
-					backDirection = rightDirection;
-					rightDirection = reservDirection;
+			reservDirection = frontDirection;
+			frontDirection = leftDirection;
+			leftDirection = backDirection;
+			backDirection = rightDirection;
+			rightDirection = reservDirection;
 
-					world.go(frontDirection, Direction::Pass);
-
-				}
+			if (world.canGo(Character::Ivan, frontDirection) == true) {
+				world.go(frontDirection, Direction::Pass);
+			}
+		}
 
 		else if (world.canGo(Character::Ivan, leftDirection) == true && !world.canGo(Character::Ivan, frontDirection) == true) { // слева свободно, прямо занято
 
-					reservDirection = frontDirection;
-					frontDirection = backDirection;
-					backDirection = reservDirection;
+			reservDirection = frontDirection;
+			frontDirection = backDirection;
+			backDirection = reservDirection;
 
-					reservDirection = leftDirection;
-					leftDirection = rightDirection;
-					rightDirection = reservDirection;
-				}
+			reservDirection = leftDirection;
+			leftDirection = rightDirection;
+			rightDirection = reservDirection;
+		}
 
 		else if (!world.canGo(Character::Ivan, leftDirection) == true && !world.canGo(Character::Ivan, frontDirection) == true) { // слева занято, прямо занято
 
-					reservDirection = frontDirection;
-					frontDirection = rightDirection;
-					rightDirection = backDirection;
-					backDirection = leftDirection;
-					leftDirection = reservDirection;
+					// разворот влево на 270 градусов
+
+			reservDirection = frontDirection;
+			frontDirection = rightDirection;
+			rightDirection = backDirection;
+			backDirection = leftDirection;
+			leftDirection = reservDirection;
 
 
-				}
-				
+		}
 	}
-		
+	if ((world.getTurnCount() - (s + 1)) > 250)
+		return 0;
+	else
 		return world.getTurnCount() - (s + 1);
 }
 
@@ -137,7 +146,7 @@ int main()
 
 	if (const int turns = walk())
 		cout << "Found in " << turns << " turns" << endl;
-	else
+	else if (walk() == 0)
 		cout << "Not found" << endl;
 
 	return 0;
